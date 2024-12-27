@@ -5,28 +5,32 @@ import { Task } from './task.entity';
 import { Repository } from 'typeorm';
 import { TaskStatus } from './tasks-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { TaskRepository } from './task.repository';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class TasksService {
     constructor(
-        @InjectRepository(Task)
-        private taskRepository: Repository<Task>,
+        // @InjectRepository(Task)
+        // private taskRepository: Repository<Task>,
+
+        @InjectRepository(TaskRepository)
+        private readonly taskRepository: TaskRepository,
     ) {}
 
-    // getAllTasks() {
-    //     return this.tasks;
-    // }
-    // getTasksWithFilter(filterDto: GetTasksFilterDto) {
-    //     const { status, search } = filterDto;
-    //     return this.tasks.filter(
-    //         (task) =>
-    //             (status ? task.status === status : true) &&
-    //             (search
-    //                 ? task.title.includes(search) ||
-    //                   task.description.includes(search)
-    //                 : true),
-    //     );
-    // }
+    async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+        const { status, search } = filterDto;
+        const query = this.taskRepository.createQueryBuilder('task');
+        if (status) query.andWhere('task.status = :status', { status });
+        if (search)
+            query.andWhere(
+                'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
+                { search: `%${search}%` },
+            );
+        const tasks = await query.getMany();
+        return tasks;
+    }
     // getTaskByID(id: string) {
     //     const existTask = this.tasks.find((task) => task.id === id);
     //     if (!existTask)
@@ -50,16 +54,8 @@ export class TasksService {
     //     this.tasks.push(task);
     //     return task;
     // }
-    async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-        const { title, description } = createTaskDto;
-
-        const task = this.taskRepository.create({
-            title,
-            description,
-            status: TaskStatus.OPEN,
-        });
-        await this.taskRepository.save(task);
-        return task;
+    async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+        return this.taskRepository.createTask(createTaskDto, user);
     }
     // deleteTask(id: string) {
     //     const existTask = this.getTaskByID(id);
@@ -81,4 +77,10 @@ export class TasksService {
     //     }
     //     return existTask;
     // }
+    async updateTaskStatus(id: string, status: TaskStatus) {
+        const task = await this.getTaskById(id);
+        task.status = status;
+        this.taskRepository.save(task);
+        return task;
+    }
 }
