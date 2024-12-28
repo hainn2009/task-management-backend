@@ -23,8 +23,8 @@ export class TasksController {
     constructor(private tasksService: TasksService) {}
 
     @Get()
-    getTasks(@Query() filterDto: GetTasksFilterDto) {
-        return this.tasksService.getTasks(filterDto);
+    getTasks(@Query() filterDto: GetTasksFilterDto, @GetUser() user: User) {
+        return this.tasksService.getTasks(filterDto, user);
     }
 
     // @Get('/:id')
@@ -32,8 +32,8 @@ export class TasksController {
     //     return this.tasksService.getTaskByID(id);
     // }
     @Get('/:id')
-    getTaskByID(@Param('id') id: string) {
-        return this.tasksService.getTaskById(id);
+    getTaskByID(@Param('id') id: string, @GetUser() user: User) {
+        return this.tasksService.getTaskById(id, user);
     }
 
     @Post()
@@ -47,8 +47,8 @@ export class TasksController {
     }
 
     @Delete('/:id')
-    deleteTask(@Param('id') id: string) {
-        return this.tasksService.deleteTask(id);
+    deleteTask(@Param('id') id: string, @GetUser() user: User) {
+        return this.tasksService.deleteTask(id, user);
     }
 
     // @Patch('/:id')
@@ -64,8 +64,9 @@ export class TasksController {
     updateTaskStatus(
         @Param('id') id: string,
         @Body() UpdateTaskStatusDto: UpdateTaskStatusDto,
+        @GetUser() user: User,
     ) {
         const { status } = UpdateTaskStatusDto;
-        if (status) return this.tasksService.updateTaskStatus(id, status);
+        if (status) return this.tasksService.updateTaskStatus(id, status, user);
     }
 }
