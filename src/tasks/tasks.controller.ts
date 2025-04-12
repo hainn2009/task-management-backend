@@ -36,6 +36,16 @@ export class TasksController {
         return this.tasksService.getTaskById(id, user);
     }
 
+    delayResponse(func: Promise<any>, delayInSeconds: number = 6000) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                func.then((data) => resolve(data)).catch((error) =>
+                    reject(error),
+                );
+            }, delayInSeconds);
+        });
+    }
+
     @Post()
     createTask(
         // @Body('title') title: string,
@@ -43,12 +53,14 @@ export class TasksController {
         @Body() createTaskDto: CreateTaskDto,
         @GetUser() user: User,
     ) {
-        return this.tasksService.createTask(createTaskDto, user);
+        return this.delayResponse(
+            this.tasksService.createTask(createTaskDto, user),
+        );
     }
 
     @Delete('/:id')
     deleteTask(@Param('id') id: string, @GetUser() user: User) {
-        return this.tasksService.deleteTask(id, user);
+        return this.delayResponse(this.tasksService.deleteTask(id, user));
     }
 
     // @Patch('/:id')
@@ -67,6 +79,9 @@ export class TasksController {
         @GetUser() user: User,
     ) {
         const { status } = UpdateTaskStatusDto;
-        if (status) return this.tasksService.updateTaskStatus(id, status, user);
+        if (status)
+            return this.delayResponse(
+                this.tasksService.updateTaskStatus(id, status, user),
+            );
     }
 }

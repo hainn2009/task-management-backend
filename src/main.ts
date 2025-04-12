@@ -9,6 +9,7 @@ async function bootstrap() {
     app.enableCors();
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalInterceptors(new TransformInterceptor());
-    await app.listen(process.env.PORT ?? 3000);
+    app.setGlobalPrefix('api'); // Set a global prefix for all routes
+    await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
