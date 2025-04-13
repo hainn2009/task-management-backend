@@ -36,7 +36,7 @@ export class TasksController {
         return this.tasksService.getTaskById(id, user);
     }
 
-    delayResponse(func: Promise<any>, delayInSeconds: number = 6000) {
+    delayResponse(func: Promise<any>, delayInSeconds: number = 0) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 func.then((data) => resolve(data)).catch((error) =>
