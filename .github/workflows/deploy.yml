@@ -32,7 +32,7 @@ jobs:
             RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
             RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
         steps:
-            - name: Deploy to Render
+            - name: Deploy to Render # trying to deploy
               run: |
                   set -x
                   echo "Service ID: '$RENDER_SERVICE_ID'"
