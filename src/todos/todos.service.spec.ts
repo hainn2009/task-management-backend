@@ -1,14 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TodosController } from './todos.controller';
 import { TodosService } from './todos.service';
 import { TodosRepository } from './todos.repository';
 
-describe('TodosController', () => {
-    let controller: TodosController;
+describe('TodosService', () => {
+    let todosService: TodosService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            controllers: [TodosController],
             providers: [
                 TodosService,
                 {
@@ -18,10 +16,14 @@ describe('TodosController', () => {
             ],
         }).compile();
 
-        controller = module.get<TodosController>(TodosController);
+        todosService = module.get<TodosService>(TodosService);
     });
 
-    it('should be defined', () => {
-        expect(controller).toBeDefined();
+    it('should return "Hello World!"', () => {
+        expect(todosService.getHello()).toBe('Hello World!');
+    });
+
+    it('should sum two numbers correctly', () => {
+        expect(todosService.sum(2, 3)).toBe(5);
     });
 });

@@ -40,4 +40,12 @@ export class TodosService {
         if (result.affected === 0)
             throw new NotFoundException(`Todo with id '${id}' was not found`);
     }
+
+    getHello(): string {
+        return 'Hello World!';
+    }
+
+    sum(a: number, b: number): number {
+        return a + b;
+    }
 }
