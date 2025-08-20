@@ -6,6 +6,7 @@ import { TodosModule } from './todos/todos.module';
 import { NewAuthModule } from './new-auth/new-auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
 
 @Module({
     imports: [
@@ -34,13 +35,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 password: configService.get<string>('DATABASE_PASSWORD'),
                 database: configService.get<string>('DATABASE_NAME'),
                 autoLoadEntities: true,
-                synchronize: true, // ⚠️ Use `false` in production
-              }),
+                synchronize: true, // Use `false` in production
+            }),
         }),
         AuthModule,
         TodosModule,
         // NewAuthModule,
         UsersModule,
     ],
+    controllers: [AppController],
+    providers: [],
 })
-export class AppModule {}
+export class AppModule { }
